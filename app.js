@@ -104,7 +104,7 @@ function processDeclare(origLine, opts, changes){
 
 function transformVariables(code, opts, changes){
   if (!opts.vars) return code;
-  const lines = code.split(/\r?\\n/);
+  const lines = code.split(/\r?\n/);
   for (let i=0;i<lines.length;i++){
     const line = lines[i];
     const body = stripInlineComment(line);
@@ -179,8 +179,7 @@ document.getElementById('btnConvert')?.addEventListener('click', run);
 document.getElementById('btnCopy')?.addEventListener('click', async () => {
   els.output.select();
   document.execCommand('copy');
-  document.getElementById('btnCopy').textContent = 'Copied!';
-  setTimeout(()=> document.getElementById('btnCopy').textContent = 'Copy to Clipboard', 1200);
+  const b = document.getElementById('btnCopy'); if (b){ b.textContent = 'Copied!'; setTimeout(()=> b.textContent = 'Copy to Clipboard', 1200); }
 });
 
 document.getElementById('btnSave')?.addEventListener('click', () => {
@@ -270,4 +269,4 @@ function runUnitTests(){
 document.getElementById('btnRunTests')?.addEventListener('click', runUnitTests);
 
 // Initial tip
-if (els.statsIn) els.statsIn.textContent = 'Paste VBA code on the left, click Convert.';
+if (els.statsIn) els.statsIn.textContent = 'Paste VBA code on the left, set options, click Convert.';

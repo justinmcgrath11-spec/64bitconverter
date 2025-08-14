@@ -7,27 +7,20 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="brand">
-      <h1>VBA 32→64-bit Converter</h1>
-      <span class="badge">client‑side</span>
-    </div>
-    <div class="actions">
-      <button class="btn ghost" id="btnLoadDemo" title="Load an example snippet">Load Demo</button>
-      <input type="file" id="fileInput" accept=".bas,.cls,.txt" class="hidden" />
-      <button class="btn ghost" id="btnOpen" title="Open a .bas or .cls file from your device">Open .bas/.cls</button>
-      <button class="btn" id="btnSave" title="Download the converted code as a .bas file">Download Output</button>
-      <button class="btn primary" id="btnConvert" title="Run the converter using the options below">Convert</button>
+  <!-- Excel-style green banner / hero -->
+  <header class="hero">
+    <div class="hero-inner">
+      <h1>VBA 32→64‑bit Converter</h1>
+      <p>Make legacy VBA macros 64‑bit safe. Add <code>PtrSafe</code>, convert pointer‑like <code>Long</code> ⇒ <code>LongPtr</code>, and optionally wrap with <code>#If VBA7</code>.</p>
+      <div class="actions">
+        <button class="btn" id="btnLoadDemo" title="Load an example snippet">Load Demo</button>
+        <input type="file" id="fileInput" accept=".bas,.cls,.txt" class="hidden" />
+        <button class="btn" id="btnOpen" title="Open a .bas or .cls file from your device">Open .bas/.cls</button>
+        <button class="btn outline" id="btnSave" title="Download the converted code as a .bas file">Download Output</button>
+        <button class="btn primary" id="btnConvert" title="Run the converter using the options below">Convert</button>
+      </div>
     </div>
   </header>
-
-  <!-- New banner / hero -->
-  <section class="hero">
-    <div class="hero-inner">
-      <h2>Make legacy VBA macros 64‑bit safe — in one click</h2>
-      <p>Automatically add <code>PtrSafe</code>, switch pointer‑like <code>Long</code> to <code>LongPtr</code>, and (optionally) wrap with <code>#If VBA7</code> for cross‑compat.</p>
-    </div>
-  </section>
 
   <main class="container">
     <section class="panel">
@@ -90,7 +83,7 @@
   </main>
 
   <footer class="footer">
-    <strong>Notes:</strong> This tool runs 100% in your browser. Heuristics can’t guarantee 100% correctness — always test in 64‑bit Office.
+    <strong>Note:</strong> Runs 100% in your browser. Heuristics can’t guarantee 100% correctness — always test in 64‑bit Office.
   </footer>
 
   <script src="app.js" defer></script>
