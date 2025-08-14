@@ -4,9 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VBA 32→64-bit Converter</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.v3.css" />
 </head>
 <body>
+  <noscript><div class="noscript">This site needs JavaScript enabled.</div></noscript>
+  <div id="jsWarning" class="js-warning">If you see this, JavaScript didn’t load. Try a hard refresh (Ctrl/Cmd+Shift+R).</div>
+
   <!-- Excel-style green banner / hero with actions -->
   <header class="hero">
     <div class="hero-inner">
@@ -68,7 +71,6 @@
         </div>
       </div>
 
-      <!-- Moved Copy button to be under output and under description pills -->
       <div class="row bottom-actions">
         <button class="btn" id="btnCopy" title="Copy converted code to your clipboard">Copy to Clipboard</button>
         <span class="stats" id="stats"></span>
@@ -94,6 +96,6 @@
     <strong>Note:</strong> Runs 100% in your browser. Heuristics can’t guarantee 100% correctness — always test in 64‑bit Office.
   </footer>
 
-  <script src="app.js" defer></script>
+  <script src="app.v3.js" defer></script>
 </body>
 </html>
