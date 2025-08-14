@@ -1,42 +1,83 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>64-bit VBA Converter</title>
-<!-- Google AdSense verification meta will go here -->
-<style>
-body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; color: #333; }
-.container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-textarea { width: 100%; height: 300px; margin-top: 10px; font-family: monospace; padding: 10px; }
-button { margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VBA 32→64-bit Converter</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<div class="container">
-<h1>VBA 32-bit to 64-bit Converter</h1>
-<p>Paste your VBA macro code below, and this tool will automatically update it for 64-bit Office compatibility.</p>
+  <header>
+    <h1>VBA 32→64-bit Converter <span class="badge">client‑side</span></h1>
+    <div class="row">
+      <button class="btn ghost" id="btnLoadDemo" title="Load an example snippet">Load Demo</button>
+      <input type="file" id="fileInput" accept=".bas,.cls,.txt" class="hidden" />
+      <button class="btn ghost" id="btnOpen">Open .bas/.cls</button>
+      <button class="btn" id="btnSave">Download Output</button>
+      <button class="btn primary" id="btnConvert">Convert</button>
+    </div>
+  </header>
 
-<textarea id="inputCode" placeholder="Paste your VBA code here..."></textarea>
-<button onclick="convertCode()">Convert</button>
-<h2>Converted Code</h2>
-<textarea id="outputCode" readonly placeholder="Converted VBA code will appear here..."></textarea>
+  <div class="env-banner">
+    <div class="env" id="envStatus"><span class="dot"></span><strong>Environment guards active.</strong> This app is fully offline and does not use wallets or extensions. Any external‑provider errors will be captured and ignored.</div>
+    <div class="env-list" id="envNotes"></div>
+  </div>
 
-<!-- AdSense Placeholder -->
-<div style="margin-top:20px; text-align:center; background:#eee; padding:10px;">Ad space</div>
+  <div class="container">
+    <section class="panel">
+      <h2>Input (paste your 32‑bit VBA macro code)</h2>
+      <textarea id="input" placeholder="Paste your VBA here…"></textarea>
+      <div class="row">
+        <label class="switch"><input type="checkbox" id="optAggressive" /> Aggressive pointer inference</label>
+        <label class="switch"><input type="checkbox" id="optVars" /> Update variable declarations</label>
+        <label class="switch"><input type="checkbox" id="optWrap" checked /> Wrap with #If VBA7 / #Else</label>
+        <label class="switch"><input type="checkbox" id="optComments" checked /> Annotate changes with comments</label>
+      </div>
+      <div class="stats" id="statsIn">Ready.</div>
+    </section>
 
-</div>
-<script>
-function convertCode() {
-    let code = document.getElementById('inputCode').value;
+    <section class="panel">
+      <h2>Output (64‑bit compatible)</h2>
+      <div class="row">
+        <button class="btn" id="btnCopy">Copy to Clipboard</button>
+        <span class="stats" id="stats"></span>
+      </div>
+      <textarea id="output" placeholder="Converted code will appear here…"></textarea>
+      <div class="grid-3">
+        <div>
+          <div class="pill ok">Adds PtrSafe</div>
+          <div class="small">Ensures every <span class="kbd">Declare</span> has <span class="kbd">PtrSafe</span>.</div>
+        </div>
+        <div>
+          <div class="pill warn">Long → LongPtr (heuristic)</div>
+          <div class="small">Only for pointer‑like names (e.g., <em>hWnd</em>, <em>lp*</em>, <em>*Ptr</em>, <em>*Handle</em>).</div>
+        </div>
+        <div>
+          <div class="pill ok">Cross‑compatible</div>
+          <div class="small">Optional wrapper keeps 32‑bit code for older Office.</div>
+        </div>
+      </div>
+    </section>
 
-    // Basic replacements for 64-bit compatibility
-    code = code.replace(/Declare\s+Function/gi, 'Declare PtrSafe Function');
-    code = code.replace(/Declare\s+Sub/gi, 'Declare PtrSafe Sub');
-    code = code.replace(/As\s+Long(?!Ptr)/gi, 'As LongPtr');
+    <section class="panel" style="grid-column: 1 / -1">
+      <h2>Change Log</h2>
+      <div class="log" id="log"></div>
+    </section>
 
-    document.getElementById('outputCode').value = code;
-}
-</script>
+    <section class="panel" style="grid-column: 1 / -1">
+      <h2>Unit Tests</h2>
+      <div class="row">
+        <button class="btn" id="btnRunTests">Run Tests</button>
+        <span class="stats" id="testSummary"></span>
+      </div>
+      <div class="log" id="testLog"></div>
+    </section>
+  </div>
+
+  <div class="footer">
+    <strong>Notes:</strong> This tool uses safe, in‑browser text processing (no uploads). Heuristics can’t guarantee 100% correctness — always test in 64‑bit Office. For APIs returning pointers/handles, you may still need manual review.
+  </div>
+
+  <script src="app.js" defer></script>
 </body>
 </html>
