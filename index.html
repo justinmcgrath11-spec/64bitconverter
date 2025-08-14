@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>64-bit VBA Converter</title>
+<!-- Google AdSense verification meta will go here -->
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; color: #333; }
+.container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+textarea { width: 100%; height: 300px; margin-top: 10px; font-family: monospace; padding: 10px; }
+button { margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>VBA 32-bit to 64-bit Converter</h1>
+<p>Paste your VBA macro code below, and this tool will automatically update it for 64-bit Office compatibility.</p>
+
+<textarea id="inputCode" placeholder="Paste your VBA code here..."></textarea>
+<button onclick="convertCode()">Convert</button>
+<h2>Converted Code</h2>
+<textarea id="outputCode" readonly placeholder="Converted VBA code will appear here..."></textarea>
+
+<!-- AdSense Placeholder -->
+<div style="margin-top:20px; text-align:center; background:#eee; padding:10px;">Ad space</div>
+
+</div>
+<script>
+function convertCode() {
+    let code = document.getElementById('inputCode').value;
+
+    // Basic replacements for 64-bit compatibility
+    code = code.replace(/Declare\s+Function/gi, 'Declare PtrSafe Function');
+    code = code.replace(/Declare\s+Sub/gi, 'Declare PtrSafe Sub');
+    code = code.replace(/As\s+Long(?!Ptr)/gi, 'As LongPtr');
+
+    document.getElementById('outputCode').value = code;
+}
+</script>
+</body>
+</html>
