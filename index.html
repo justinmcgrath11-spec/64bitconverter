@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>64-bit VBA Converter</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="banner">
+    <h1>64-bit VBA Converter</h1>
+    <p>Convert your 32-bit VBA macros to 64-bit ready code in seconds.</p>
+  </div>
+  <div class="container">
+    <textarea id="inputCode" placeholder="Paste your VBA code here..."></textarea>
+    <div class="options">
+      <label class="switch" title="If checked, your code will be wrapped with #If VBA7 / #Else for backward compatibility with 32-bit Office.">
+        <input type="checkbox" id="optWrap" checked> Wrap with #If VBA7 / #Else
+      </label>
+      <label class="switch" title="If checked, declares without PtrSafe will be updated for 64-bit compatibility.">
+        <input type="checkbox" id="optUpdateDeclares" checked> Update Declare Statements
+      </label>
+    </div>
+    <button id="convertBtn">Convert</button>
+    <textarea id="outputCode" placeholder="Converted code will appear here..." readonly></textarea>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
