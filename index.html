@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VBA 32->64-bit Converter</title>
+  <link rel="stylesheet" href="styles.excel.v2.2.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="brand">
+        <h1>VBA 32->64-bit Converter</h1>
+        <span class="sub">Private - runs in your browser</span>
+      </div>
+      <div class="actions">
+        <button class="btn" id="btnLoadDemo" title="Load a 32-bit macro example">Load Demo</button>
+        <input type="file" id="fileInput" accept=".bas,.cls,.txt" class="hidden">
+        <button class="btn" id="btnOpen" title="Open a .bas or .cls file from your device">Open .bas/.cls</button>
+        <button class="btn outline" id="btnSave" title="Download the converted code">Download Output</button>
+        <button class="btn primary" id="btnConvert" title="Convert using the options below">Convert</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel" id="inputPanel">
+      <h3>Input (paste your 32-bit VBA macro)</h3>
+      <div class="codewrap">
+        <pre id="inputMirror" class="codemirror" aria-hidden="true"></pre>
+        <textarea id="input" class="codeinput" placeholder="Paste your VBA here..."></textarea>
+      </div>
+
+      <div class="row options">
+        <label class="switch" title="Also change function return types that look like handles (e.g., FindWindow) from Long to LongPtr.">
+          <input type="checkbox" id="optAggressive"> Aggressive pointer inference
+        </label>
+        <label class="switch" title="Change variable declarations like 'Dim hWnd As Long' to LongPtr when the name looks pointer-like.">
+          <input type="checkbox" id="optVars"> Update variable declarations
+        </label>
+        <label class="switch" title="Keep 32-bit declares for older Office using #If VBA7 / #Else.">
+          <input type="checkbox" id="optWrap" checked> Wrap with #If VBA7 / #Else
+        </label>
+        <label class="switch" title="Append [AutoConverted ...] comments to changed lines.">
+          <input type="checkbox" id="optComments" checked> Annotate changes with comments
+        </label>
+        <label class="switch" title="If on, opening or dropping a file will auto-convert.">
+          <input type="checkbox" id="optAutoConvert" checked> Auto-convert on Open/Drop
+        </label>
+      </div>
+      <div class="hint">Tip: Drag and drop a .bas or .cls file onto this panel.</div>
+      <div class="stats" id="statsIn">Ready.</div>
+    </section>
+
+    <section class="panel">
+      <h3>Output (64-bit compatible)</h3>
+      <div class="codewrap">
+        <pre id="outputMirror" class="codemirror" aria-hidden="true"></pre>
+        <textarea id="output" class="codeinput" placeholder="Converted code will appear here..." readonly></textarea>
+      </div>
+
+      <div class="grid-3 features">
+        <div><div class="pill ok">Adds PtrSafe</div><div class="small">Ensures every <span class="kbd">Declare</span> has <span class="kbd">PtrSafe</span>.</div></div>
+        <div><div class="pill warn">Long -> LongPtr (heuristic)</div><div class="small">Only for pointer-like names (hWnd, lp*, *Ptr, *Handle).</div></div>
+        <div><div class="pill ok">Cross-compatible</div><div class="small">Optional wrapper keeps 32-bit code for older Office.</div></div>
+      </div>
+
+      <div class="row bottom-actions">
+        <button class="btn" id="btnCopy" title="Copy converted code to your clipboard">Copy to Clipboard</button>
+        <span class="stats" id="stats"></span>
+      </div>
+    </section>
+
+    <section class="panel" style="grid-column:1/-1">
+      <h3>Change Log</h3>
+      <div class="log" id="log"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <strong>Note:</strong> Heuristics cannot guarantee 100% correctness. Always test in 64-bit Office.
+  </footer>
+
+  <script src="app.excel.v2.2.js" defer></script>
+</body>
+</html>
