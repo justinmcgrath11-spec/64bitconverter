@@ -7,13 +7,15 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Excel-style green banner / hero -->
+  <!-- Excel-style green banner / hero with actions -->
   <header class="hero">
     <div class="hero-inner">
-      <h1>VBA 32→64‑bit Converter</h1>
-      <p>Make legacy VBA macros 64‑bit safe. Add <code>PtrSafe</code>, convert pointer‑like <code>Long</code> ⇒ <code>LongPtr</code>, and optionally wrap with <code>#If VBA7</code>.</p>
+      <div class="brand">
+        <h1>VBA 32→64‑bit Converter</h1>
+        <span class="sub">Client‑side • Private</span>
+      </div>
       <div class="actions">
-        <button class="btn" id="btnLoadDemo" title="Load an example snippet">Load Demo</button>
+        <button class="btn" id="btnLoadDemo" title="Load an example 32‑bit macro into the input">Load Demo</button>
         <input type="file" id="fileInput" accept=".bas,.cls,.txt" class="hidden" />
         <button class="btn" id="btnOpen" title="Open a .bas or .cls file from your device">Open .bas/.cls</button>
         <button class="btn outline" id="btnSave" title="Download the converted code as a .bas file">Download Output</button>
@@ -23,7 +25,7 @@
   </header>
 
   <main class="container">
-    <section class="panel">
+    <section class="panel" id="inputPanel">
       <h3>Input (paste your 32‑bit VBA macro code)</h3>
       <textarea id="input" placeholder="Paste your VBA here…"></textarea>
       <div class="row options">
@@ -39,17 +41,17 @@
         <label class="switch" title="Append comments like '[AutoConverted …]' to changed lines so you can review modifications.">
           <input type="checkbox" id="optComments" checked /> Annotate changes with comments
         </label>
+        <label class="switch" title="If on, running Open or dragging a .bas/.cls onto the input will immediately convert and fill the output.">
+          <input type="checkbox" id="optAutoConvert" checked /> Auto‑convert on Open/Drop
+        </label>
       </div>
+      <div class="hint">Tip: You can also <strong>drag & drop</strong> a <code>.bas</code> or <code>.cls</code> file onto this input box.</div>
       <div class="stats" id="statsIn">Ready.</div>
     </section>
 
     <section class="panel">
       <h3>Output (64‑bit compatible)</h3>
-      <div class="row">
-        <button class="btn" id="btnCopy" title="Copy converted code to your clipboard">Copy to Clipboard</button>
-        <span class="stats" id="stats"></span>
-      </div>
-      <textarea id="output" placeholder="Converted code will appear here…"></textarea>
+      <textarea id="output" placeholder="Converted code will appear here…" readonly></textarea>
 
       <div class="grid-3 features">
         <div>
@@ -64,6 +66,12 @@
           <div class="pill ok">Cross‑compatible</div>
           <div class="small">Optional wrapper keeps 32‑bit code for older Office.</div>
         </div>
+      </div>
+
+      <!-- Moved Copy button to be under output and under description pills -->
+      <div class="row bottom-actions">
+        <button class="btn" id="btnCopy" title="Copy converted code to your clipboard">Copy to Clipboard</button>
+        <span class="stats" id="stats"></span>
       </div>
     </section>
 
