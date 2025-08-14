@@ -1,27 +1,3 @@
-// Environment guards (capture wallet/metamask errors so UI still loads)
-const env = { warnings: [] };
-const envNotes = document.getElementById('envNotes');
-const envStatus = document.getElementById('envStatus');
-function pushEnvWarning(msg){
-  env.warnings.push(msg);
-  if (envStatus) envStatus.classList.add('error');
-  if (envNotes) envNotes.textContent = env.warnings.map((w,i)=>`[${i+1}] ${w}`).join('  ');
-}
-window.addEventListener('error', (e) => {
-  const msg = (e && e.message) || '';
-  if (/metamask|ethereum|wallet/i.test(msg)) {
-    e.preventDefault && e.preventDefault();
-    pushEnvWarning('External wallet error captured and ignored: ' + msg);
-  }
-});
-window.addEventListener('unhandledrejection', (e) => {
-  const reason = e && (e.reason && (e.reason.message || String(e.reason)));
-  if (/metamask|ethereum|wallet/i.test(reason||'')){
-    e.preventDefault && e.preventDefault();
-    pushEnvWarning('External wallet rejection captured and ignored: ' + reason);
-  }
-});
-
 // Elements
 const els = {
   input: document.getElementById('input'),
@@ -47,34 +23,14 @@ const els = {
 // Converter logic
 const pointerNameRx = /^(h|hwnd|hdc|hinst|hmenu|hicon|hcursor|hfont|hbrush|hbitmap|lp|lpsz|lpcstr|lpcwstr|lptstr|lpstr|lpwstr|p|ptr|pidl|ppv|ph|wparam|lparam|addr|address|window|handle|buffer|buf|pb|pv)/i;
 
-function stripInlineComment(line){
-  let inQ = false, out = '';
-  for (let i=0;i<line.length;i++){
-    const ch = line[i];
-    if (ch === '"') inQ = !inQ;
-    if (ch === "'" && !inQ) break;
-    out += ch;
-  }
-  return out;
-}
-
-function looksPointer(name){
-  return pointerNameRx.test(name) || /ptr|handle|wnd|addr/i.test(name);
-}
-
-function ensurePtrSafe(decl){
-  return decl.replace(/\bDeclare\b(?!\s+PtrSafe)/i, 'Declare PtrSafe');
-}
-
-function splitParams(paramStr){
-  if (!paramStr.trim()) return [];
-  return paramStr.split(',').map(s=>s.trim()).filter(Boolean);
-}
+function stripInlineComment(line){ let inQ=false, out=''; for(let i=0;i<line.length;i++){ const ch=line[i]; if(ch==='\"') inQ=!inQ; if(ch===\"'\" && !inQ) break; out+=ch; } return out; }
+function looksPointer(name){ return pointerNameRx.test(name) || /ptr|handle|wnd|addr/i.test(name); }
+function ensurePtrSafe(decl){ return decl.replace(/\bDeclare\b(?!\s+PtrSafe)/i, 'Declare PtrSafe'); }
+function splitParams(paramStr){ if(!paramStr.trim()) return []; return paramStr.split(',').map(s=>s.trim()).filter(Boolean); }
 
 function transformParam(p, opts, changes){
   const anyMatch = /As\s+Any\b/i.test(p);
   if (anyMatch) return { txt: p, changed: false };
-
   const m = p.match(/^(\s*(?:Optional\s+)?(?:ByVal|ByRef)?\s*)([\w_]+)(\s*As\s+)([\w_]+)(.*)$/i);
   if (!m) return { txt: p, changed: false };
   const [, pre, name, asKw, type, tail] = m;
@@ -148,7 +104,7 @@ function processDeclare(origLine, opts, changes){
 
 function transformVariables(code, opts, changes){
   if (!opts.vars) return code;
-  const lines = code.split(/\r?\n/);
+  const lines = code.split(/\r?\\n/);
   for (let i=0;i<lines.length;i++){
     const line = lines[i];
     const body = stripInlineComment(line);
@@ -198,7 +154,7 @@ function convert(code, opts){
   return { out, changes, log: logLines.join('\n') };
 }
 
-// UI
+// UI handlers
 function run(){
   const opts = {
     aggressive: els.optAggressive.checked,
@@ -214,20 +170,20 @@ function run(){
   els.statsIn.textContent = `${src.split(/\r?\n/).length} lines in input.`;
 }
 
-if (els.btnConvert) els.btnConvert.addEventListener('click', run);
+document.getElementById('btnConvert')?.addEventListener('click', run);
 ['optAggressive','optVars','optWrap','optComments'].forEach(id=>{
   const el = els[id];
   if (el) el.addEventListener('change', run);
 });
 
-if (els.btnCopy) els.btnCopy.addEventListener('click', async () => {
+document.getElementById('btnCopy')?.addEventListener('click', async () => {
   els.output.select();
   document.execCommand('copy');
-  els.btnCopy.textContent = 'Copied!';
-  setTimeout(()=> els.btnCopy.textContent = 'Copy to Clipboard', 1200);
+  document.getElementById('btnCopy').textContent = 'Copied!';
+  setTimeout(()=> document.getElementById('btnCopy').textContent = 'Copy to Clipboard', 1200);
 });
 
-if (els.btnSave) els.btnSave.addEventListener('click', () => {
+document.getElementById('btnSave')?.addEventListener('click', () => {
   const blob = new Blob([els.output.value], { type: 'text/plain;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -236,31 +192,27 @@ if (els.btnSave) els.btnSave.addEventListener('click', () => {
   URL.revokeObjectURL(a.href);
 });
 
-if (els.btnOpen && els.fileInput){
-  els.btnOpen.addEventListener('click', ()=> els.fileInput.click());
-  els.fileInput.addEventListener('change', async (e) => {
-    const f = e.target.files[0];
-    if (!f) return;
-    const txt = await f.text();
-    els.input.value = txt;
-    run();
-  });
-}
+document.getElementById('btnOpen')?.addEventListener('click', ()=> els.fileInput.click());
+document.getElementById('fileInput')?.addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const txt = await f.text();
+  els.input.value = txt;
+  run();
+});
 
-if (els.btnLoadDemo){
-  els.btnLoadDemo.addEventListener('click', () => {
-    const demo = `Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+document.getElementById('btnLoadDemo')?.addEventListener('click', () => {
+  const demo = `Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
 
 Dim hWnd As Long, pBuf As Long, i As Long
 `;
-    els.input.value = demo;
-    run();
-  });
-}
+  els.input.value = demo;
+  run();
+});
 
-// Tests
+// Unit tests
 function runUnitTests(){
   const results = [];
   function pass(name){ results.push({ name, ok:true }); }
@@ -306,24 +258,16 @@ function runUnitTests(){
     expectTrue('T5: Source As Any kept', /Source\s+As\s+Any/i.test(r.out), r.out);
   })();
 
-  (function(){
-    const before = env.warnings.length;
-    const evt = new ErrorEvent('error', { message: 'Failed to connect to MetaMask' });
-    window.dispatchEvent(evt);
-    const after = env.warnings.length;
-    expectTrue('T6: MetaMask error captured', after === before + 1, 'Warnings did not increment');
-  })();
-
   const passed = results.filter(r=>r.ok).length;
   const failed = results.length - passed;
-  if (els.testSummary) els.testSummary.innerHTML = failed === 0
-    ? `<span class="tests-pass">All ${passed} tests passed ✔</span>`
-    : `<span class="tests-fail">${failed} of ${results.length} tests failed ✖</span>`;
+  els.testSummary.innerHTML = failed === 0
+    ? `<span class="ok">All ${passed} tests passed ✔</span>`
+    : `<span class="err">${failed} of ${results.length} tests failed ✖</span>`;
 
-  if (els.testLog) els.testLog.textContent = results.map(r => r.ok ? `✅ ${r.name}` : `❌ ${r.name} — ${r.why || ''}`).join('\n');
+  els.testLog.textContent = results.map(r => r.ok ? `✅ ${r.name}` : `❌ ${r.name} — ${r.why || ''}`).join('\n');
 }
 
-if (els.btnRunTests) els.btnRunTests.addEventListener('click', runUnitTests);
+document.getElementById('btnRunTests')?.addEventListener('click', runUnitTests);
 
 // Initial tip
 if (els.statsIn) els.statsIn.textContent = 'Paste VBA code on the left, click Convert.';

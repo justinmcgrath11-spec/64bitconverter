@@ -7,50 +7,65 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <h1>VBA 32→64-bit Converter <span class="badge">client‑side</span></h1>
-    <div class="row">
+  <header class="site-header">
+    <div class="brand">
+      <h1>VBA 32→64-bit Converter</h1>
+      <span class="badge">client‑side</span>
+    </div>
+    <div class="actions">
       <button class="btn ghost" id="btnLoadDemo" title="Load an example snippet">Load Demo</button>
       <input type="file" id="fileInput" accept=".bas,.cls,.txt" class="hidden" />
-      <button class="btn ghost" id="btnOpen">Open .bas/.cls</button>
-      <button class="btn" id="btnSave">Download Output</button>
-      <button class="btn primary" id="btnConvert">Convert</button>
+      <button class="btn ghost" id="btnOpen" title="Open a .bas or .cls file from your device">Open .bas/.cls</button>
+      <button class="btn" id="btnSave" title="Download the converted code as a .bas file">Download Output</button>
+      <button class="btn primary" id="btnConvert" title="Run the converter using the options below">Convert</button>
     </div>
   </header>
 
-  <div class="env-banner">
-    <div class="env" id="envStatus"><span class="dot"></span><strong>Environment guards active.</strong> This app is fully offline and does not use wallets or extensions. Any external‑provider errors will be captured and ignored.</div>
-    <div class="env-list" id="envNotes"></div>
-  </div>
+  <!-- New banner / hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h2>Make legacy VBA macros 64‑bit safe — in one click</h2>
+      <p>Automatically add <code>PtrSafe</code>, switch pointer‑like <code>Long</code> to <code>LongPtr</code>, and (optionally) wrap with <code>#If VBA7</code> for cross‑compat.</p>
+    </div>
+  </section>
 
-  <div class="container">
+  <main class="container">
     <section class="panel">
-      <h2>Input (paste your 32‑bit VBA macro code)</h2>
+      <h3>Input (paste your 32‑bit VBA macro code)</h3>
       <textarea id="input" placeholder="Paste your VBA here…"></textarea>
-      <div class="row">
-        <label class="switch"><input type="checkbox" id="optAggressive" /> Aggressive pointer inference</label>
-        <label class="switch"><input type="checkbox" id="optVars" /> Update variable declarations</label>
-        <label class="switch"><input type="checkbox" id="optWrap" checked /> Wrap with #If VBA7 / #Else</label>
-        <label class="switch"><input type="checkbox" id="optComments" checked /> Annotate changes with comments</label>
+      <div class="row options">
+        <label class="switch" title="When on, also change function return types that look like handles (e.g., FindWindow) from Long to LongPtr. Use with care.">
+          <input type="checkbox" id="optAggressive" /> Aggressive pointer inference
+        </label>
+        <label class="switch" title="Change variable declarations like 'Dim hWnd As Long' to LongPtr when the name looks pointer‑like (hWnd, pBuffer, handle...).">
+          <input type="checkbox" id="optVars" /> Update variable declarations
+        </label>
+        <label class="switch" title="Emit '#If VBA7 Then' for the 64‑bit declare, and keep the original 32‑bit declare under '#Else' for older Office.">
+          <input type="checkbox" id="optWrap" checked /> Wrap with #If VBA7 / #Else
+        </label>
+        <label class="switch" title="Append comments like '[AutoConverted …]' to changed lines so you can review modifications.">
+          <input type="checkbox" id="optComments" checked /> Annotate changes with comments
+        </label>
       </div>
       <div class="stats" id="statsIn">Ready.</div>
     </section>
 
     <section class="panel">
-      <h2>Output (64‑bit compatible)</h2>
+      <h3>Output (64‑bit compatible)</h3>
       <div class="row">
-        <button class="btn" id="btnCopy">Copy to Clipboard</button>
+        <button class="btn" id="btnCopy" title="Copy converted code to your clipboard">Copy to Clipboard</button>
         <span class="stats" id="stats"></span>
       </div>
       <textarea id="output" placeholder="Converted code will appear here…"></textarea>
-      <div class="grid-3">
+
+      <div class="grid-3 features">
         <div>
           <div class="pill ok">Adds PtrSafe</div>
           <div class="small">Ensures every <span class="kbd">Declare</span> has <span class="kbd">PtrSafe</span>.</div>
         </div>
         <div>
           <div class="pill warn">Long → LongPtr (heuristic)</div>
-          <div class="small">Only for pointer‑like names (e.g., <em>hWnd</em>, <em>lp*</em>, <em>*Ptr</em>, <em>*Handle</em>).</div>
+          <div class="small">Only for pointer‑like names (<em>hWnd</em>, <em>lp*</em>, <em>*Ptr</em>, <em>*Handle</em>).</div>
         </div>
         <div>
           <div class="pill ok">Cross‑compatible</div>
@@ -59,24 +74,24 @@
       </div>
     </section>
 
-    <section class="panel" style="grid-column: 1 / -1">
-      <h2>Change Log</h2>
+    <section class="panel" style="grid-column:1/-1">
+      <h3>Change Log</h3>
       <div class="log" id="log"></div>
     </section>
 
-    <section class="panel" style="grid-column: 1 / -1">
-      <h2>Unit Tests</h2>
+    <section class="panel" style="grid-column:1/-1">
+      <h3>Unit Tests</h3>
       <div class="row">
         <button class="btn" id="btnRunTests">Run Tests</button>
         <span class="stats" id="testSummary"></span>
       </div>
       <div class="log" id="testLog"></div>
     </section>
-  </div>
+  </main>
 
-  <div class="footer">
-    <strong>Notes:</strong> This tool uses safe, in‑browser text processing (no uploads). Heuristics can’t guarantee 100% correctness — always test in 64‑bit Office. For APIs returning pointers/handles, you may still need manual review.
-  </div>
+  <footer class="footer">
+    <strong>Notes:</strong> This tool runs 100% in your browser. Heuristics can’t guarantee 100% correctness — always test in 64‑bit Office.
+  </footer>
 
   <script src="app.js" defer></script>
 </body>
